@@ -36,7 +36,6 @@ class SushiPiece: SKSpriteNode {
     
     
     
-    
     // Required init to for subclass to work
     override init(texture: SKTexture?, color: UIColor, size: CGSize) {
         super.init(texture: texture, color: color, size: size)
