@@ -11,9 +11,12 @@ import SpriteKit
 
 /* Tracking enum for use with character and sushi side */
 enum Side {
-    case left
-    case right
-    case none
+    case left, right, none
+}
+
+/* Tracking enum for game state */
+enum GameState {
+    case title, ready, playing, gameOver
 }
 
 class GameScene: SKScene {
@@ -24,6 +27,11 @@ class GameScene: SKScene {
     
     // Sushi tower array
     var sushiTower: [SushiPiece] = []
+    
+    /* Game management */
+    var state: GameState = .title
+    var playButton: MSButtonNode!
+
     
     
     
@@ -43,6 +51,15 @@ class GameScene: SKScene {
         
         // Add a random number of sushi pieces to the tower
         addRandomPieces(total: 10)
+        
+        // UI game objects
+        playButton = childNode(withName: "playButton") as! MSButtonNode
+        
+        // Setup play button selection handler
+        playButton.selectedHandler = {
+            // Start game
+            self.state = .ready
+        }
     }
 
     
@@ -110,6 +127,13 @@ class GameScene: SKScene {
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         // Call when a touch begins
         
+        // Game not ready to play
+        if state == .gameOver || state == .title { return }
+        // Game begins on first touch
+        if state == .ready {
+            state = .playing
+        }
+        
         // We only need a single touch
         let touch = touches.first
         
@@ -125,6 +149,15 @@ class GameScene: SKScene {
  
         // Grab sushi piece on top of the base sushi piece, it'll always be 'first'
         if let firstPiece = sushiTower.first {
+            
+            // Check character side against sushi piece side, death collision check
+            if character.side == firstPiece.side {
+                // No need to continue / player is dead
+                gameOver()
+                return
+            }
+            
+            
             /* Remove from sushi tower array */
             sushiTower.removeFirst()
             
@@ -135,7 +168,39 @@ class GameScene: SKScene {
             addRandomPieces(total: 1)
         }
     }
+    
 
+    func gameOver() {
+        // Game over!
+        
+        state = .gameOver
+        
+        // Turn all the sushi pieces red
+        for sushiPiece in sushiTower {
+            sushiPiece.run(SKAction.colorize(with: UIColor.red, colorBlendFactor: 1.0, duration: 0.50))
+        }
+        
+        // Make the player turn red
+        character.run(SKAction.colorize(with: UIColor.red, colorBlendFactor: 1.0, duration: 0.50))
+        
+        // Change play button selection handler
+        playButton.selectedHandler = {
+            
+            // Grab reference to the SpriteKit view
+            let skView = self.view as SKView!
+            
+            // Load Game scene
+            guard let scene = GameScene(fileNamed:"GameScene") as GameScene! else {
+                return
+            }
+            
+            // Ensure correct aspect mode
+            scene.scaleMode = .aspectFill
+            
+            // Restart GameScene
+            skView?.presentScene(scene)
+        }
+    }
     
     func moveTowerDown() {
         var n: CGFloat = 0
