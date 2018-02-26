@@ -35,13 +35,15 @@ class Character: SKSpriteNode {
                 xScale = 1
                 position.x = 70
             } else {
-                /* An easy way to flip an asset horizontally
-                is to invert the X-axis scale */
-                
+                // Flip asset horizontally / invert the X-axis scale
                 // FIXME: Get help refactoring the rightChopstick
                 xScale = -1
-                position.x = 252
+                position.x = 250
             }
+                        
+            // Load/Run the punch action
+            let punch = SKAction(named: "punch")!
+            run(punch)
         }
     }
     

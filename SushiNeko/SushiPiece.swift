@@ -33,8 +33,29 @@ class SushiPiece: SKSpriteNode {
             }
         }
     }
+
     
-    
+    func flip(_ side: Side) {
+        // Flip the sushi out of the screen
+        
+        var actionName: String = ""
+        
+        if side == .left {
+            actionName = "flipRight"
+        } else {
+            actionName = "flipLeft"
+        }
+        
+        // Load appropriate action
+        let flip = SKAction(named: actionName)
+        
+        // Create a node removal action
+        let remove = SKAction.removeFromParent()
+        
+        // Build sequence, flip then remove from scene
+        let sequence = SKAction.sequence([flip!, remove])
+        run(sequence)
+    }
     
     // Required init to for subclass to work
     override init(texture: SKTexture?, color: UIColor, size: CGSize) {
@@ -45,13 +66,7 @@ class SushiPiece: SKSpriteNode {
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
-    
-    /*func connectChopsticks() {
-        /* Connect our child chopstick nodes */
-        rightChopstick = childNode(withName: "rightChopstick") as! SKSpriteNode
-        leftChopstick = childNode(withName: "leftChopstick") as! SKSpriteNode
-    } */
-    
+
     func connectChopSticks() {
         // Connect our child chopstick nodes
         rightChopstick = childNode(withName: "rightChopstick") as! SKSpriteNode
