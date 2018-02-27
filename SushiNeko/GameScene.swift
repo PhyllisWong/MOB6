@@ -31,6 +31,15 @@ class GameScene: SKScene {
     /* Game management */
     var state: GameState = .title
     var playButton: MSButtonNode!
+    var healthBar: SKSpriteNode!
+    
+    var health: CGFloat = 1.0 {
+        didSet {
+            /* Scale health bar between 0.0 -> 1.0 e.g 0 -> 100% */
+            healthBar.xScale = health
+        }
+    }
+
 
     
     
@@ -60,6 +69,8 @@ class GameScene: SKScene {
             // Start game
             self.state = .ready
         }
+        healthBar = childNode(withName: "healthBar") as! SKSpriteNode
+
     }
 
     
